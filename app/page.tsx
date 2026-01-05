@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { db, schema, } from "@/server/db";
 import { drizzle } from 'drizzle-orm/mysql2';
 import { auth } from "../auth"
-
+import { redirect } from "next/navigation";
 // import { Form } from "@/components/ui/form"
 export default async function Home() {
   // async function handleClick() {
@@ -13,7 +13,7 @@ export default async function Home() {
 
     const session = await auth()
   console.log('Fetched session:', session)
-  if (!session?.user) return null
+  if (!session?.user) return redirect('/api/auth/signin')
   // }
   // const db2 = drizzle({ schema: {...schema.posts, ...schema.users} });
   // const users2 = await db2.query.users.findMany();
