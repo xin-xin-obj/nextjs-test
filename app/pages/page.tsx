@@ -1,19 +1,21 @@
-'use client';
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-import { useEffect } from "react";
+import { db, schema, } from "@/server/db";
+import { drizzle } from 'drizzle-orm/mysql2';
+import { auth } from "../../auth"
+import { redirect } from "next/navigation";
 import { trpcClient } from "@/utils/api";
 // import { Form } from "@/components/ui/form"
-export default function Home() {
- 
+export default async function Home() {
+  // async function handleClick() {
+    const users = await db.select().from(schema.users);
+    console.log('Fetched users:', users);
 
-    
-    useEffect(() => {
-      trpcClient.hello.query().then((res) => {
-        console.log('Fetched greeting:', res)
-      });
-    }, []);
+    const session = await auth()
+  console.log('Fetched session:', session)
+  if (!session?.user) return redirect('/api/auth/signin')
+
   // }
   // const db2 = drizzle({ schema: {...schema.posts, ...schema.users} });
   // const users2 = await db2.query.users.findMany();
@@ -26,7 +28,14 @@ export default function Home() {
           <Input placeholder="Enter text here" />
           <Button variant="ghost" size="sm" className="font-bold">Click me</Button>
         </form>
-        
+        ----------
+        {
+          users.map(user => (
+            <div key={user.id}>
+              <p>{user.name}</p>
+            </div>
+          ))
+        }
       </main>
     </div>
   );
