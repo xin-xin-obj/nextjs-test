@@ -10,7 +10,7 @@ export const authOptions: NextAuthOptions = {
 
   // ✅ v4 + Credentials 强烈建议 JWT
   session: {
-    strategy: "jwt",
+    strategy: "database",
   },
 
   providers: [
