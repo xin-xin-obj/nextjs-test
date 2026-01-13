@@ -11,5 +11,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientSecret: process.env.GITHUB_SECRET,
     }),
   ],
+  // providers:[GitHub],
   adapter: DrizzleAdapter(db),
 })
