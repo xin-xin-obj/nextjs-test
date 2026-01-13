@@ -31,9 +31,13 @@ import {
   primaryKey,
   varchar,
 } from "drizzle-orm/mysql-core"
+import { relations } from "drizzle-orm"
 import mysql from "mysql2/promise"
 import { drizzle } from "drizzle-orm/mysql2"
 import type { AdapterAccount } from "next-auth/adapters"
+import { createSelectSchema } from 'drizzle-zod';
+
+
  
 // export const connection = await mysql.createConnection({
 //   host: "host",
@@ -129,3 +133,30 @@ export const authenticators = mysqlTable(
     }),
   })
 )
+
+// posts 表定义
+export const posts = mysqlTable('post', {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: varchar("content", { length: 1000 }),
+  authorId: varchar("authorId", { length: 255 })
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(() => new Date()),
+})
+
+// 定义 users 和 posts 之间的关系
+export const usersRelations = relations(users, ({ many }) => ({
+  posts: many(posts),
+}))
+
+export const postsRelations = relations(posts, ({ one }) => ({
+  author: one(users, {
+    fields: [posts.authorId],
+    references: [users.id],
+  }),
+}))
+
+export const userSelectSchema = createSelectSchema(users)

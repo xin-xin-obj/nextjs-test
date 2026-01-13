@@ -1,20 +1,5 @@
-import { initTRPC } from '@trpc/server';
+import { createTRPCReact } from '@trpc/react-query';
+import type { AppRouter } from '../server/trpc/app';
 
-// You can use any variable name you like.
-// We use t to keep things simple.
-const t = initTRPC.create();
- 
-export const router = t.router;
-export const publicProcedure = t.procedure;
-
-const appRouter = router({
-  greeting: publicProcedure.query(() => 'hello tRPC v10!'),
-  hello: publicProcedure.query((ctx) => {
-    console.log('Context:', ctx.session);
-    return {
-      message: 'hello world',
-    };
-  }),
-});
-export type AppRouter = typeof appRouter;
-export default appRouter;
+// 创建 tRPC React 客户端（带 hooks）
+export const trpc = createTRPCReact<AppRouter>();
